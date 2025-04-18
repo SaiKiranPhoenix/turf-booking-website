@@ -1,57 +1,77 @@
 // src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/authContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+
 import LoginPage from './features/auth/LoginPage';
 import RegisterPage from './features/auth/RegisterPage';
 import NotFound from './components/NotFound';
+import Unauthorized from './components/Unauthorized';
 
-// Simple placeholder dashboard component - you can replace this later
-const Dashboard = () => (
-  <div className="min-h-screen bg-green-50 p-8">
-    <h1 className="text-3xl font-bold text-green-800">Dashboard</h1>
-    <p className="mt-4">Welcome to your Turf Booking Dashboard!</p>
-  </div>
-);
+import AdminDashboard from './features/dashboard/AdminDashboard';
+import UserDashboard from './features/dashboard/UserDashboard';
 
-// Protected route component
+// ProtectedRoute for authenticated access
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+
+  return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
+// RoleBasedRoute for role-based access
+const RoleBasedRoute = ({ allowedRoles, children }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+
+  if (!user || !allowedRoles.includes(user.role)) {
+    return <Navigate to="/unauthorized" />;
   }
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
-  
+
   return children;
 };
 
 const App = () => {
   return (
     <AuthProvider>
-      <Router>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
-          {/* Public routes */}
-          <Route path="/login" element={<LoginPage />} />
+          {/* Public Routes */}
+          <Route path="/login" element={<UserDashboard />} />
           <Route path="/register" element={<RegisterPage />} />
-          
-          {/* Protected routes */}
+
+          {/* Role-based Protected Routes */}
           <Route 
-            path="/dashboard" 
+            path="/admin" 
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <RoleBasedRoute allowedRoles={['admin']}>
+                  <AdminDashboard />
+                </RoleBasedRoute>
               </ProtectedRoute>
             } 
           />
-          
-          {/* Redirect to login if accessing root */}
+
+          <Route 
+            path="/user" 
+            element={
+              <ProtectedRoute>
+                <RoleBasedRoute allowedRoles={['user']}>
+                  <UserDashboard />
+                </RoleBasedRoute>
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Default route redirection */}
           <Route path="/" element={<Navigate to="/login" />} />
           
-          {/* 404 page */}
+          {/* Unauthorized Access */}
+          <Route path="/unauthorized" element={<Unauthorized />} />
+
+          {/* 404 Not Found */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

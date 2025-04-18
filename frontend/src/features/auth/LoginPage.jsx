@@ -8,8 +8,8 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import { login } from '../../services/authService';
-import { useAuth } from '../../contexts/authContext';
-import TurfLogo from '../../assets/images/logo.png'; // Make sure to add your logo
+import { useAuth } from '../../contexts/AuthContext';
+import TurfLogo from '../../assets/sportnest.png'; // Make sure to add your logo
 
 const LoginPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,8 +49,12 @@ const LoginPage = () => {
         // Update auth context
         setUser(user);
         
-        // Redirect to the dashboard
-        navigate('/dashboard');
+        // Redirect based on user role
+        if (user.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/user');
+        }
       } catch (err) {
         setError(err.message || 'Failed to login. Please check your credentials.');
       } finally {
@@ -74,7 +78,7 @@ const LoginPage = () => {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="mb-6 inline-block"
           >
-            <img src={TurfLogo} alt="TurfBooker Logo" className="h-16 mx-auto" />
+            <img src={TurfLogo} alt="TurfBooker Logo" className="h-16 mx-auto rounded" />
           </motion.div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back!</h2>
           <p className="text-gray-600 mb-6">Sign in to access your account</p>
@@ -93,7 +97,6 @@ const LoginPage = () => {
               id="email"
               name="email"
               type="email"
-              label="Email Address"
               placeholder="Enter your email"
               value={formik.values.email}
               onChange={formik.handleChange}
@@ -114,7 +117,6 @@ const LoginPage = () => {
                 id="password"
                 name="password"
                 type="password"
-                label="Password"
                 placeholder="Enter your password"
                 value={formik.values.password}
                 onChange={formik.handleChange}

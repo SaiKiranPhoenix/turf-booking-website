@@ -9,7 +9,7 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import Checkbox from '../../components/Checkbox';
 import { register } from '../../services/authService';
-import TurfLogo from '../../assets/react.svg'; // Make sure to add your logo
+import TurfLogo from '../../assets/sportnest.png'; // Make sure to add your logo
 
 const RegisterPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
