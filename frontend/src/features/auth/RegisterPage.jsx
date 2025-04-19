@@ -98,7 +98,7 @@ const RegisterPage = () => {
               transition={{ delay: 0.2, duration: 0.5 }}
               className="mb-4 inline-block"
             >
-              <img src={TurfLogo} alt="TurfBooker Logo" className="h-16 mx-auto" />
+              <img src={TurfLogo} alt="SportNest Logo" className="h-16 mx-auto" />
             </motion.div>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Create Your Account</h2>
             <p className="text-gray-600 mb-6">Join our community and start booking turfs today</p>

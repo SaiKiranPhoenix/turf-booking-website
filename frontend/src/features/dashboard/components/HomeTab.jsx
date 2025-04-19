@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiPlus, FiCalendar, FiChevronRight, FiMapPin, FiDollarSign, FiClock, FiHeart } from 'react-icons/fi';
 import { FaFutbol, FaStar, FaRegStar } from 'react-icons/fa';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import Button from '../../../components/Button';
+import TurfCardSkeleton from '../../../components/TurfCardSkeleton';
+import BookingCardSkeleton from '../../../components/BookingCardSkeleton';
 import { 
   mockBookings, 
   mockPopularEvents
@@ -18,7 +22,87 @@ const dashboardStats = [
   { id: 4, title: 'Favorite Sports', value: '3', icon: <FiHeart />, color: 'bg-red-100 text-red-600' }
 ];
 
-const HomeTab = ({ viewBookingDetails, mockAvailableTurfs }) => {
+const HomeTabSkeleton = () => {
+  return (
+    <div className="space-y-8">
+      {/* Welcome Section Skeleton */}
+      <section className="mb-8">
+        <div className="bg-gradient-to-r from-green-600 to-green-800 rounded-2xl p-8 text-white shadow-lg relative overflow-hidden">
+          <div className="max-w-2xl relative z-10">
+            <Skeleton height={40} width={200} className="mb-2" />
+            <Skeleton height={20} width={300} className="mb-6" />
+            <div className="flex flex-wrap gap-4">
+              <Skeleton height={40} width={150} />
+              <Skeleton height={40} width={150} />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Grid Skeleton */}
+      <section className="mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((index) => (
+            <div key={index} className="bg-white rounded-xl shadow-sm p-6">
+              <div className="flex items-center mb-4">
+                <Skeleton circle width={40} height={40} className="mr-4" />
+                <div>
+                  <Skeleton height={20} width={100} className="mb-2" />
+                  <Skeleton height={30} width={80} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Upcoming Bookings Skeleton */}
+      <section className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <Skeleton height={30} width={200} />
+          <Skeleton height={20} width={100} />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((index) => (
+            <BookingCardSkeleton key={index} />
+          ))}
+        </div>
+      </section>
+
+      {/* Popular Events Skeleton */}
+      <section className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <Skeleton height={30} width={200} />
+          <Skeleton height={20} width={100} />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((index) => (
+            <TurfCardSkeleton key={index} />
+          ))}
+        </div>
+      </section>
+
+      {/* Recommended Turfs Skeleton */}
+      <section className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <Skeleton height={30} width={200} />
+          <Skeleton height={20} width={100} />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((index) => (
+            <TurfCardSkeleton key={index} />
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+const HomeTab = ({ viewBookingDetails, mockAvailableTurfs, isLoading }) => {
+  if (isLoading) {
+    return <HomeTabSkeleton />;
+  }
+
   return (
     <motion.div
       initial="hidden"
@@ -36,7 +120,7 @@ const HomeTab = ({ viewBookingDetails, mockAvailableTurfs }) => {
           <div className="absolute top-0 right-0 w-64 h-64 opacity-10">
             <FaFutbol className="w-full h-full" />
           </div>
-          <div className="max-w-2xl relative z-10">
+          <div className="max-w-2xl relative z-0">
             <motion.h1 
               className="text-3xl font-bold mb-2"
               initial={{ opacity: 0, y: -20 }}
@@ -54,12 +138,10 @@ const HomeTab = ({ viewBookingDetails, mockAvailableTurfs }) => {
               Ready for your next game? Explore turfs or manage your bookings.
             </motion.p>
             <motion.div 
-              className="flex flex-wrap gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
+              className="flex space-x-4"
+              variants={fadeIn}
             >
-              <Button className="bg-white text-green-700 px-4 py-2 rounded-lg font-medium hover:bg-green-50 transition-all duration-300 transform hover:scale-105 flex items-center shadow-md">
+              <Button className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-all duration-300 transform hover:scale-105 flex items-center shadow-md">
                 <FiPlus className="mr-2" />
                 <span>New Booking</span>
               </Button>

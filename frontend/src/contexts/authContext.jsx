@@ -1,6 +1,6 @@
 // src/contexts/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getCurrentUser } from '../services/authService';
+import { getCurrentUser, logout } from '../services/authService';
 
 const AuthContext = createContext();
 
@@ -14,9 +14,14 @@ export const AuthProvider = ({ children }) => {
     const loadUser = async () => {
       try {
         const currentUser = await getCurrentUser();
-        setUser(currentUser);
+        if (currentUser) {
+          setUser(currentUser.user);
+        } else {
+          setUser(null);
+        }
       } catch (error) {
         console.error('Error loading user:', error);
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -25,9 +30,22 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
+  const login = (userData) => {
+    if (userData && userData.user) {
+      setUser(userData.user);
+    }
+  };
+
+  const logoutUser = () => {
+    logout();
+    setUser(null);
+  };
+
   const value = {
     user,
     setUser,
+    login,
+    logout: logoutUser,
     loading,
     isAuthenticated: !!user,
   };

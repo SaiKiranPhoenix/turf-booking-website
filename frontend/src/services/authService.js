@@ -3,16 +3,31 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api'; // Replace with your actual API URL
 
+// Set auth token in axios headers
+const setAuthToken = (token) => {
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    delete axios.defaults.headers.common['Authorization'];
+  }
+};
+
 // Login user
 export const login = async (email, password) => {
   try {
-    // In a real app, this would be an actual API call
     const response = await axios.post(`${API_URL}/auth/login`, {
       email,
       password,
     });
     
-    return response.data;
+    const { token, user } = response.data;
+    
+    // Set token in axios headers
+    if (token) {
+      setAuthToken(token);
+    }
+    
+    return { token, user };
   } catch (error) {
     throw new Error(
       error.response?.data?.message || 'Failed to login. Please check your credentials.'
@@ -23,10 +38,16 @@ export const login = async (email, password) => {
 // Register user
 export const register = async (userData) => {
   try {
-    // In a real app, this would be an actual API call
     const response = await axios.post(`${API_URL}/auth/register`, userData);
     
-    return response.data;
+    const { token, user } = response.data;
+    
+    // Set token in axios headers if returned
+    if (token) {
+      setAuthToken(token);
+    }
+    
+    return { token, user };
   } catch (error) {
     throw new Error(
       error.response?.data?.message || 'Failed to register. Please try again.'
@@ -43,16 +64,15 @@ export const getCurrentUser = async () => {
       return null;
     }
     
-    // In a real app, this would be an actual API call
-    const response = await axios.get(`${API_URL}/auth/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    // Set token in axios headers
+    setAuthToken(token);
     
-    return response.data;
+    const response = await axios.get(`${API_URL}/auth/me`);
+    return { token, user: response.data };
   } catch (error) {
     console.error('Error getting current user:', error);
+    // Clear token if it's invalid
+    logout();
     return null;
   }
 };
@@ -61,4 +81,5 @@ export const getCurrentUser = async () => {
 export const logout = () => {
   localStorage.removeItem('authToken');
   sessionStorage.removeItem('authToken');
+  setAuthToken(null);
 };

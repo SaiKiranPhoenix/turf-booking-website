@@ -26,6 +26,7 @@ import 'react-calendar/dist/Calendar.css';
 
 import Button from '../../components/Button';
 import Input from '../../components/Input';
+import AdminBookingsTab from './components/AdminBookingsTab';
 
 
 // Mock data for demonstration
@@ -120,6 +121,230 @@ const AdminDashboard = () => {
         return <FaVolleyballBall className="text-red-600" />;
       default:
         return <FaRunning className="text-gray-600" />;
+    }
+  };
+
+  // Render content based on active tab
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return (
+          <div className="space-y-6">
+            {/* Welcome Section */}
+            <section className="mb-8">
+              <div className="bg-gradient-to-r from-green-600 to-green-800 rounded-2xl p-8 text-white shadow-lg">
+                <div className="max-w-2xl">
+                  <h1 className="text-3xl font-bold mb-2">Welcome to SportNest!</h1>
+                  <p className="opacity-90 mb-6">
+                    Manage your turf bookings, track performance, and grow your business all in one place.
+                  </p>
+                  <Button className="border border-white text-green-700  transition-colors duration-200">
+                    <span>Create New Booking</span>
+                    <FiPlus className="ml-2" />
+                  </Button>
+                </div>
+              </div>
+            </section>
+
+            {/* Stats Grid */}
+            <section className="mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {mockStats.map((stat) => (
+                  <motion.div
+                    key={stat.id}
+                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                    className="bg-white rounded-xl shadow-sm overflow-hidden"
+                  >
+                    <div className="p-6">
+                      <div className="flex items-center mb-4">
+                        <div className={`p-3 rounded-lg ${stat.color} mr-4`}>
+                          {stat.icon}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-700">
+                            {stat.title}
+                          </h3>
+                          <p className="text-2xl font-bold text-gray-900">
+                            {stat.value}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <span className="text-green-500 flex items-center mr-2">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                            />
+                          </svg>
+                          12%
+                        </span>
+                        <span>from last month</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </section>
+
+            {/* Recent Bookings */}
+            <section className="mb-8">
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-gray-200">
+                  <h2 className="text-xl font-semibold text-gray-800">Recent Bookings</h2>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Customer
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Turf
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Date & Time
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {mockRecentBookings.map((booking) => (
+                        <tr key={booking.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 mr-3">
+                                {booking.customer.charAt(0)}
+                              </div>
+                              <div className="text-sm font-medium text-gray-900">{booking.customer}</div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="mr-2">
+                                {getSportIcon(booking.sport)}
+                              </div>
+                              <div className="text-sm text-gray-900">{booking.turf}</div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">{booking.date}</div>
+                            <div className="text-sm text-gray-500">{booking.time}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(booking.status)}`}>
+                              {booking.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button className="text-green-600 hover:text-green-900 mr-3">View</button>
+                            <button className="text-blue-600 hover:text-blue-900">Edit</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="p-4 border-t border-gray-200">
+                  <Button className="text-green-600 hover:text-green-800">
+                    View all bookings
+                    <FiChevronRight className="ml-1" />
+                  </Button>
+                </div>
+              </div>
+            </section>
+
+            {/* Available Turfs */}
+            <section>
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-gray-200">
+                  <h2 className="text-xl font-semibold text-gray-800">Available Turfs</h2>
+                </div>
+                <div className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {mockAvailableTurfs.map((turf) => (
+                      <motion.div
+                        key={turf.id}
+                        whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                        className="bg-gray-50 rounded-xl p-6 border border-gray-200"
+                      >
+                        <div className="flex items-center mb-4">
+                          <div className="p-3 rounded-lg bg-green-100 text-green-600 mr-4">
+                            {turf.icon}
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-800">{turf.name}</h3>
+                            <p className="text-sm text-gray-500">{turf.sport}</p>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <Button className="text-green-600 hover:text-green-800">
+                            View Details
+                            <FiChevronRight className="ml-1" />
+                          </Button>
+                          <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+                            Book Now
+                          </Button>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        );
+      case 'bookings':
+        return <AdminBookingsTab />;
+      case 'turfs':
+        return (
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h2 className="text-xl font-semibold mb-4">My Turfs</h2>
+              <div className="h-[600px] flex items-center justify-center">
+                <p className="text-gray-500">Turfs management coming soon...</p>
+              </div>
+            </div>
+          </div>
+        );
+      case 'customers':
+        return (
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h2 className="text-xl font-semibold mb-4">Customers</h2>
+              <div className="h-[600px] flex items-center justify-center">
+                <p className="text-gray-500">Customer management coming soon...</p>
+              </div>
+            </div>
+          </div>
+        );
+      case 'reports':
+        return (
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h2 className="text-xl font-semibold mb-4">Reports</h2>
+              <div className="h-[600px] flex items-center justify-center">
+                <p className="text-gray-500">Reports coming soon...</p>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
@@ -350,249 +575,7 @@ const AdminDashboard = () => {
               transition={{ duration: 0.3 }}
               className="container mx-auto"
             >
-              {/* Welcome Section */}
-              <section className="mb-8">
-                <div className="bg-gradient-to-r from-green-600 to-green-800 rounded-2xl p-8 text-white shadow-lg">
-                  <div className="max-w-2xl">
-                    <h1 className="text-3xl font-bold mb-2">Welcome to SportNest!</h1>
-                    <p className="opacity-90 mb-6">
-                      Manage your turf bookings, track performance, and grow your business all in one place.
-                    </p>
-                    <Button className="border border-white text-green-700  transition-colors duration-200">
-                      <span>Create New Booking</span>
-                      <FiPlus className="ml-2" />
-                    </Button>
-                  </div>
-                </div>
-              </section>
-
-              {/* Stats Grid */}
-              <section className="mb-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {mockStats.map((stat) => (
-                    <motion.div
-                      key={stat.id}
-                      whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                      className="bg-white rounded-xl shadow-sm overflow-hidden"
-                    >
-                      <div className="p-6">
-                        <div className="flex items-center mb-4">
-                          <div className={`p-3 rounded-lg ${stat.color} mr-4`}>
-                            {stat.icon}
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-700">
-                              {stat.title}
-                            </h3>
-                            <p className="text-2xl font-bold text-gray-900">
-                              {stat.value}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center text-sm text-gray-500">
-                          <span className="text-green-500 flex items-center mr-2">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-4 w-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 10l7-7m0 0l7 7m-7-7v18"
-                              />
-                            </svg>
-                            <span className="ml-1">12%</span>
-                          </span>
-                          <span>from last month</span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </section>
-
-              {/* Two column layout for calendar and quick actions */}
-              <section className="mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Calendar */}
-                <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-semibold text-gray-800">Booking Calendar</h2>
-                    <div className="flex space-x-2">
-                      <Button className="bg-gray-100 text-gray-800 hover:bg-gray-200 text-sm">
-                        Day
-                      </Button>
-                      <Button className="bg-green-600 text-white hover:bg-green-700 text-sm">
-                        Week
-                      </Button>
-                      <Button className="bg-gray-100 text-gray-800 hover:bg-gray-200 text-sm">
-                        Month
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="calendar-container">
-                    <Calendar
-                      onChange={setDate}
-                      value={date}
-                      className="custom-calendar"
-                    />
-                  </div>
-                  <div className="mt-6 flex flex-wrap gap-3">
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-                      <span className="text-sm text-gray-600">Available</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
-                      <span className="text-sm text-gray-600">Booked</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
-                      <span className="text-sm text-gray-600">Pending</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 rounded-full bg-gray-300 mr-2"></div>
-                      <span className="text-sm text-gray-600">Maintenance</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="bg-white rounded-xl shadow-sm p-6">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-6">Available Turfs</h2>
-                  <div className="space-y-4">
-                    {mockAvailableTurfs.map((turf) => (
-                      <motion.div
-                        key={turf.id}
-                        whileHover={{ x: 5 }}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-green-50 transition-colors duration-200"
-                      >
-                        <div className="flex items-center">
-                          <div className="p-2 rounded-lg bg-white shadow-sm mr-3">
-                            {turf.icon}
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-800">{turf.name}</p>
-                            <p className="text-sm text-gray-500">{turf.sport}</p>
-                          </div>
-                        </div>
-                        <FiChevronRight className="text-gray-400" />
-                      </motion.div>
-                    ))}
-                  </div>
-                  <Button className="mt-6 w-full bg-green-600 text-white hover:bg-green-700">
-                    View All Turfs
-                  </Button>
-                </div>
-              </section>
-
-              {/* Recent Bookings */}
-              <section className="mb-8">
-                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                  <div className="p-6 border-b border-gray-200">
-                    <div className="flex justify-between items-center">
-                      <h2 className="text-xl font-semibold text-gray-800">Recent Bookings</h2>
-                      <Button className="bg-gray-100 text-gray-800 hover:bg-gray-200 text-sm">
-                        View All
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Customer
-                          </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Turf & Sport
-                          </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Date
-                          </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Time
-                          </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status
-                          </th>
-                          <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {mockRecentBookings.map((booking) => (
-                          <motion.tr 
-                            key={booking.id}
-                            whileHover={{ backgroundColor: '#f9fafb' }}
-                          >
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center">
-                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                                  {booking.customer.charAt(0)}
-                                </div>
-                                <div className="ml-4">
-                                  <div className="text-sm font-medium text-gray-900">{booking.customer}</div>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center">
-                                <div className="mr-2">
-                                  {getSportIcon(booking.sport)}
-                                </div>
-                                <div>
-                                  <div className="text-sm text-gray-900">{booking.turf}</div>
-                                  <div className="text-sm text-gray-500">{booking.sport}</div>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {booking.date}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {booking.time}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(booking.status)}`}>
-                                {booking.status}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                              <button className="text-green-600 hover:text-green-900 mr-3">Edit</button>
-                              <button className="text-red-600 hover:text-red-900">Cancel</button>
-                            </td>
-                          </motion.tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="p-4 border-t border-gray-200 flex items-center justify-between">
-                    <p className="text-sm text-gray-500">Showing 5 of 24 bookings</p>
-                    <div className="flex space-x-1">
-                      <Button className="bg-gray-100 text-gray-800 hover:bg-gray-200 text-sm px-2 py-1">
-                        Previous
-                      </Button>
-                      <Button className="bg-green-600 text-white hover:bg-green-700 text-sm px-3 py-1">
-                        1
-                      </Button>
-                      <Button className="bg-gray-100 text-gray-800 hover:bg-gray-200 text-sm px-3 py-1">
-                        2
-                      </Button>
-                      <Button className="bg-gray-100 text-gray-800 hover:bg-gray-200 text-sm px-3 py-1">
-                        3
-                      </Button>
-                      <Button className="bg-gray-100 text-gray-800 hover:bg-gray-200 text-sm px-2 py-1">
-                        Next
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </section>
+              {renderContent()}
             </motion.div>
           </AnimatePresence>
         </main>
@@ -607,48 +590,50 @@ const AdminDashboard = () => {
       )}
       
       {/* Custom styles for the calendar */}
-      <style jsx>{`
-        .custom-calendar {
-          width: 100%;
-          border: none;
-          font-family: inherit;
-        }
+      <style>
+        {`
+          .custom-calendar {
+            width: 100%;
+            border: none;
+            font-family: inherit;
+          }
 
-        .custom-calendar .react-calendar__tile--active {
-          background: #16a34a;
-          color: white;
-        }
+          .custom-calendar .react-calendar__tile--active {
+            background: #16a34a;
+            color: white;
+          }
 
-        .custom-calendar .react-calendar__tile--now {
-          background: #dcfce7;
-        }
+          .custom-calendar .react-calendar__tile--now {
+            background: #dcfce7;
+          }
 
-        .custom-calendar .react-calendar__tile:hover {
-          background: #f0fdf4;
-        }
+          .custom-calendar .react-calendar__tile:hover {
+            background: #f0fdf4;
+          }
 
-        .custom-calendar .react-calendar__navigation button:hover {
-          background: #f0fdf4;
-        }
+          .custom-calendar .react-calendar__navigation button:hover {
+            background: #f0fdf4;
+          }
 
-        .custom-calendar .react-calendar__navigation {
-          margin-bottom: 1rem;
-        }
+          .custom-calendar .react-calendar__navigation {
+            margin-bottom: 1rem;
+          }
 
-        .custom-calendar .react-calendar__month-view__weekdays {
-          text-transform: uppercase;
-          font-weight: bold;
-        }
+          .custom-calendar .react-calendar__month-view__weekdays {
+            text-transform: uppercase;
+            font-weight: bold;
+          }
 
-        .custom-calendar .react-calendar__month-view__days__day--weekend {
-          color: #ef4444;
-        }
+          .custom-calendar .react-calendar__month-view__days__day--weekend {
+            color: #ef4444;
+          }
 
-        .custom-calendar button {
-          border-radius: 0.375rem;
-          padding: 0.5rem;
-        }
-      `}</style>
+          .custom-calendar button {
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+          }
+        `}
+      </style>
     </div>
   );
 };

@@ -14,7 +14,7 @@ import TurfLogo from '../../assets/sportnest.png'; // Make sure to add your logo
 const LoginPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
-  const { setUser } = useAuth();
+  const { login: authLogin } = useAuth();
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -37,20 +37,23 @@ const LoginPage = () => {
       
       try {
         // In a real app, this would call your API
-        const user = await login(values.email, values.password);
+        const response = await login(values.email, values.password);
         
         // Store the token in localStorage if remember me is checked
         if (values.rememberMe) {
-          localStorage.setItem('authToken', user.token);
+          localStorage.setItem('authToken', response.token);
         } else {
-          sessionStorage.setItem('authToken', user.token);
+          sessionStorage.setItem('authToken', response.token);
         }
         
-        // Update auth context
-        setUser(user);
+        // Update auth context with the complete user data
+        authLogin({
+          user: response.user,
+          token: response.token
+        });
         
         // Redirect based on user role
-        if (user.role === 'admin') {
+        if (response.user.role === 'admin') {
           navigate('/admin');
         } else {
           navigate('/user');
@@ -78,7 +81,7 @@ const LoginPage = () => {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="mb-6 inline-block"
           >
-            <img src={TurfLogo} alt="TurfBooker Logo" className="h-16 mx-auto rounded" />
+            <img src={TurfLogo} alt="SportNest Logo" className="h-16 mx-auto rounded" />
           </motion.div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back!</h2>
           <p className="text-gray-600 mb-6">Sign in to access your account</p>

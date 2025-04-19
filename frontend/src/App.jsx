@@ -39,7 +39,7 @@ const App = () => {
       <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           {/* Public Routes */}
-          <Route path="/login" element={<UserDashboard />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
           {/* Role-based Protected Routes */}

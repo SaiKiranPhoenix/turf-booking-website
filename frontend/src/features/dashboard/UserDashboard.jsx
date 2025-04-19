@@ -45,6 +45,10 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import BookingsTab from './components/BookingsTab';
 import HomeTab from './components/HomeTab';
+import FindTurfsTab from './components/FindTurfsTab';
+import FavoritesTab from './components/FavoritesTab';
+import PaymentsTab from './components/PaymentsTab';
+import SettingsTab from './components/SettingsTab';
 import { fadeIn, staggerContainer, scaleIn } from './utils/animationVariants';
 import { getSportIcon, getStatusColor } from './utils/helpers.jsx';
 import { mockBookings, mockUserStats, mockRecommendedTurfs } from './data/mockData.jsx';
@@ -204,6 +208,14 @@ const UserDashboard = () => {
         return <HomeTab viewBookingDetails={viewBookingDetails} mockAvailableTurfs={mockAvailableTurfs} />;
       case 'bookings':
         return <BookingsTab />;
+      case 'find-turfs':
+        return <FindTurfsTab />;
+      case 'favorites':
+        return <FavoritesTab />;
+      case 'payments':
+        return <PaymentsTab />;
+      case 'settings':
+        return <SettingsTab />;
       case 'calendar':
         return (
           <motion.div
@@ -240,7 +252,7 @@ const UserDashboard = () => {
           >
             <div className="p-4 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h1 className="text-xl font-bold text-green-600">TurfBooker</h1>
+                <h1 className="text-xl font-bold text-green-600">SportNest</h1>
                 {isMobile && (
                   <button 
                     onClick={() => setSidebarOpen(false)}
@@ -287,7 +299,12 @@ const UserDashboard = () => {
                   <motion.button
                     whileHover={{ x: 5 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center w-full p-3 rounded-lg text-gray-700 hover:bg-gray-100"
+                    onClick={() => handleTabChange('find-turfs')}
+                    className={`flex items-center w-full p-3 rounded-lg ${
+                      activeTab === 'find-turfs' 
+                        ? 'bg-green-100 text-green-700 font-medium' 
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
                   >
                     <FiSearch className="mr-3" />
                     <span>Find Turfs</span>
@@ -297,7 +314,12 @@ const UserDashboard = () => {
                   <motion.button
                     whileHover={{ x: 5 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center w-full p-3 rounded-lg text-gray-700 hover:bg-gray-100"
+                    onClick={() => handleTabChange('favorites')}
+                    className={`flex items-center w-full p-3 rounded-lg ${
+                      activeTab === 'favorites' 
+                        ? 'bg-green-100 text-green-700 font-medium' 
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
                   >
                     <FiHeart className="mr-3" />
                     <span>Favorites</span>
@@ -307,7 +329,12 @@ const UserDashboard = () => {
                   <motion.button
                     whileHover={{ x: 5 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center w-full p-3 rounded-lg text-gray-700 hover:bg-gray-100"
+                    onClick={() => handleTabChange('payments')}
+                    className={`flex items-center w-full p-3 rounded-lg ${
+                      activeTab === 'payments' 
+                        ? 'bg-green-100 text-green-700 font-medium' 
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
                   >
                     <FiCreditCard className="mr-3" />
                     <span>Payments</span>
@@ -317,7 +344,12 @@ const UserDashboard = () => {
                   <motion.button
                     whileHover={{ x: 5 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center w-full p-3 rounded-lg text-gray-700 hover:bg-gray-100"
+                    onClick={() => handleTabChange('settings')}
+                    className={`flex items-center w-full p-3 rounded-lg ${
+                      activeTab === 'settings' 
+                        ? 'bg-green-100 text-green-700 font-medium' 
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
                   >
                     <FiSettings className="mr-3" />
                     <span>Settings</span>
