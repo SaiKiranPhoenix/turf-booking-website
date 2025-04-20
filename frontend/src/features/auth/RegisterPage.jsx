@@ -26,6 +26,7 @@ const RegisterPage = () => {
       password: '',
       confirmPassword: '',
       agreeToTerms: false,
+      role: 'user',
     },
     validationSchema: Yup.object({
       firstName: Yup.string()
@@ -53,19 +54,22 @@ const RegisterPage = () => {
       agreeToTerms: Yup.boolean()
         .oneOf([true], 'You must accept the terms and conditions')
         .required('You must accept the terms and conditions'),
+      role: Yup.string()
+        .oneOf(['user', 'admin'], 'Invalid role selected')
+        .required('Role is required'),
     }),
     onSubmit: async (values) => {
       setIsSubmitting(true);
       setError(null);
       
       try {
-        // In a real app, this would call your API
         await register({
           firstName: values.firstName,
           lastName: values.lastName,
           email: values.email,
           phone: values.phone,
           password: values.password,
+          role: values.role,
         });
         
         setSuccessMessage('Registration successful! You can now login with your credentials.');
@@ -230,12 +234,51 @@ const RegisterPage = () => {
               }
             />
             
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Register as
+              </label>
+              <div className="flex space-x-4">
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="roleUser"
+                    name="role"
+                    value="user"
+                    checked={formik.values.role === 'user'}
+                    onChange={formik.handleChange}
+                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
+                  />
+                  <label htmlFor="roleUser" className="ml-2 block text-sm text-gray-700">
+                    Regular User
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="roleAdmin"
+                    name="role"
+                    value="admin"
+                    checked={formik.values.role === 'admin'}
+                    onChange={formik.handleChange}
+                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
+                  />
+                  <label htmlFor="roleAdmin" className="ml-2 block text-sm text-gray-700">
+                    Admin
+                  </label>
+                </div>
+              </div>
+              {formik.touched.role && formik.errors.role && (
+                <p className="mt-1 text-sm text-red-600">{formik.errors.role}</p>
+              )}
+            </div>
+            
             <div className="mt-6">
               <Checkbox
                 id="agreeToTerms"
                 name="agreeToTerms"
                 label={
-                  <span>
+                  <span className="text-gray-700">
                     I agree to the{' '}
                     <Link to="/terms" className="text-green-600 hover:text-green-500 font-medium">
                       Terms of Service
@@ -251,6 +294,7 @@ const RegisterPage = () => {
                 onBlur={formik.handleBlur}
                 error={formik.touched.agreeToTerms ? formik.errors.agreeToTerms : ""}
                 touched={formik.touched.agreeToTerms}
+                className="border-gray-300"
               />
             </div>
             

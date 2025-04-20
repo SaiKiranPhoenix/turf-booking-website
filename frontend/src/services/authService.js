@@ -7,10 +7,18 @@ const API_URL = 'http://localhost:5000/api'; // Replace with your actual API URL
 const setAuthToken = (token) => {
   if (token) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    localStorage.setItem('authToken', token);
   } else {
     delete axios.defaults.headers.common['Authorization'];
+    localStorage.removeItem('authToken');
   }
 };
+
+// Initialize auth token from storage
+const token = localStorage.getItem('authToken');
+if (token) {
+  setAuthToken(token);
+}
 
 // Login user
 export const login = async (email, password) => {
@@ -22,7 +30,6 @@ export const login = async (email, password) => {
     
     const { token, user } = response.data;
     
-    // Set token in axios headers
     if (token) {
       setAuthToken(token);
     }
@@ -42,7 +49,6 @@ export const register = async (userData) => {
     
     const { token, user } = response.data;
     
-    // Set token in axios headers if returned
     if (token) {
       setAuthToken(token);
     }
@@ -58,28 +64,19 @@ export const register = async (userData) => {
 // Get current user
 export const getCurrentUser = async () => {
   try {
-    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-    
-    if (!token) {
-      return null;
-    }
-    
-    // Set token in axios headers
+    const token = localStorage.getItem('authToken');
+    if (!token) return null;
+
     setAuthToken(token);
-    
     const response = await axios.get(`${API_URL}/auth/me`);
-    return { token, user: response.data };
+    return response.data;
   } catch (error) {
     console.error('Error getting current user:', error);
-    // Clear token if it's invalid
-    logout();
     return null;
   }
 };
 
 // Logout user
 export const logout = () => {
-  localStorage.removeItem('authToken');
-  sessionStorage.removeItem('authToken');
   setAuthToken(null);
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const Input = ({
@@ -60,7 +60,10 @@ const Input = ({
               : 'border-gray-300 focus:ring-green-500 focus:border-green-500'
             }
             ${disabled ? 'bg-gray-100 text-gray-500' : 'bg-white'}
+            text-gray-900
+            placeholder-gray-400
             transition-all duration-200
+            ${className}
           `}
           aria-invalid={hasError ? 'true' : 'false'}
           aria-describedby={hasError ? `${name}-error` : undefined}

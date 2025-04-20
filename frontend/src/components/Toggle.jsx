@@ -37,7 +37,11 @@ const Toggle = ({
       {label && labelPosition === 'left' && (
         <label 
           htmlFor={id || name} 
-          className={`${currentSize.label} mr-3 cursor-pointer ${disabled ? 'text-gray-500' : 'text-gray-900'}`}
+          className={`${currentSize.label} mr-3 cursor-pointer ${
+            disabled 
+              ? 'text-gray-500 dark:text-gray-600' 
+              : 'text-gray-900 dark:text-gray-100'
+          }`}
         >
           {label}
         </label>
@@ -56,7 +60,10 @@ const Toggle = ({
         <div 
           className={`
             ${currentSize.toggle} 
-            ${checked ? 'bg-green-600' : 'bg-gray-200'} 
+            ${checked 
+              ? 'bg-green-600 dark:bg-green-500' 
+              : 'bg-gray-200 dark:bg-gray-700'
+            } 
             rounded-full cursor-pointer transition-colors ease-in-out duration-200
             ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           `}
@@ -64,7 +71,7 @@ const Toggle = ({
           <div 
             className={`
               ${currentSize.dot} 
-              bg-white rounded-full shadow transform transition ease-in-out duration-200
+              bg-white dark:bg-gray-100 rounded-full shadow transform transition ease-in-out duration-200
               ${checked ? currentSize.dot : 'translate-x-0.5'}
             `}
           />
@@ -74,7 +81,11 @@ const Toggle = ({
       {label && labelPosition === 'right' && (
         <label 
           htmlFor={id || name} 
-          className={`${currentSize.label} ml-3 cursor-pointer ${disabled ? 'text-gray-500' : 'text-gray-900'}`}
+          className={`${currentSize.label} ml-3 cursor-pointer ${
+            disabled 
+              ? 'text-gray-500 dark:text-gray-600' 
+              : 'text-gray-900 dark:text-gray-100'
+          }`}
         >
           {label}
         </label>

@@ -2,6 +2,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import ThemeToggle from './components/ThemeToggle';
 
 import LoginPage from './features/auth/LoginPage';
 import RegisterPage from './features/auth/RegisterPage';
@@ -33,49 +35,65 @@ const RoleBasedRoute = ({ allowedRoles, children }) => {
   return children;
 };
 
+// Layout component with theme toggle
+const Layout = ({ children }) => {
+  return (
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+      {children}
+    </div>
+  );
+};
+
 const App = () => {
   return (
-    <AuthProvider>
-      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+    <ThemeProvider>
+      <AuthProvider>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <Layout>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
 
-          {/* Role-based Protected Routes */}
-          <Route 
-            path="/admin" 
-            element={
-              <ProtectedRoute>
-                <RoleBasedRoute allowedRoles={['admin']}>
-                  <AdminDashboard />
-                </RoleBasedRoute>
-              </ProtectedRoute>
-            } 
-          />
+              {/* Role-based Protected Routes */}
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedRoute>
+                    <RoleBasedRoute allowedRoles={['admin']}>
+                      <AdminDashboard />
+                    </RoleBasedRoute>
+                  </ProtectedRoute>
+                } 
+              />
 
-          <Route 
-            path="/user" 
-            element={
-              <ProtectedRoute>
-                <RoleBasedRoute allowedRoles={['user']}>
-                  <UserDashboard />
-                </RoleBasedRoute>
-              </ProtectedRoute>
-            } 
-          />
+              <Route 
+                path="/user" 
+                element={
+                  <ProtectedRoute>
+                    <RoleBasedRoute allowedRoles={['user']}>
+                      <UserDashboard />
+                    </RoleBasedRoute>
+                  </ProtectedRoute>
+                } 
+              />
 
-          {/* Default route redirection */}
-          <Route path="/" element={<Navigate to="/login" />} />
-          
-          {/* Unauthorized Access */}
-          <Route path="/unauthorized" element={<Unauthorized />} />
+              {/* Default route redirection */}
+              <Route path="/" element={<Navigate to="/login" />} />
+              
+              {/* Unauthorized Access */}
+              <Route path="/unauthorized" element={<Unauthorized />} />
 
-          {/* 404 Not Found */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
+              {/* 404 Not Found */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Layout>
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 };
 

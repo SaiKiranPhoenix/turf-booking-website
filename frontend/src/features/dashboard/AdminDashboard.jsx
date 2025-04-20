@@ -18,16 +18,14 @@ import {
   FaBasketballBall,
   FaRunning,
 } from 'react-icons/fa';
-
 import { MdSportsTennis } from 'react-icons/md';
-
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import AdminBookingsTab from './components/AdminBookingsTab';
-
+import ThemeToggle from '../../components/ThemeToggle';
+import { useTheme } from '../../contexts/ThemeContext';
 
 // Mock data for demonstration
 const mockStats = [
@@ -67,6 +65,8 @@ const AdminDashboard = () => {
   const [unreadCount, setUnreadCount] = useState(2);
   const [activeTab, setActiveTab] = useState('overview');
   const [isMobile, setIsMobile] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const { isDarkMode } = useTheme();
 
   // Check if viewport is mobile
   useEffect(() => {
@@ -94,12 +94,12 @@ const AdminDashboard = () => {
 
   // Get status color based on booking status
   const getStatusColor = (status) => {
-    switch(status) {
-      case 'Confirmed':
+    switch (status) {
+      case 'confirmed':
         return 'bg-green-100 text-green-800';
-      case 'Pending':
+      case 'pending':
         return 'bg-yellow-100 text-yellow-800';
-      case 'Cancelled':
+      case 'cancelled':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -108,16 +108,16 @@ const AdminDashboard = () => {
 
   // Sport icon mapper
   const getSportIcon = (sport) => {
-    switch(sport.toLowerCase()) {
-      case 'football':
+    switch (sport) {
+      case 'Football':
         return <FaFutbol className="text-green-600" />;
-      case 'cricket':
+      case 'Cricket':
         return <FaRunning className="text-blue-600" />;
-      case 'basketball':
+      case 'Basketball':
         return <FaBasketballBall className="text-orange-600" />;
-      case 'tennis':
+      case 'Tennis':
         return <MdSportsTennis className="text-yellow-600" />;
-      case 'volleyball':
+      case 'Volleyball':
         return <FaVolleyballBall className="text-red-600" />;
       default:
         return <FaRunning className="text-gray-600" />;
@@ -138,7 +138,7 @@ const AdminDashboard = () => {
                   <p className="opacity-90 mb-6">
                     Manage your turf bookings, track performance, and grow your business all in one place.
                   </p>
-                  <Button className="border border-white text-green-700  transition-colors duration-200">
+                  <Button className="bg-white border border-white text-green-700 hover:bg-green-50 transition-colors duration-200">
                     <span>Create New Booking</span>
                     <FiPlus className="ml-2" />
                   </Button>
@@ -157,14 +157,14 @@ const AdminDashboard = () => {
                   >
                     <div className="p-6">
                       <div className="flex items-center mb-4">
-                        <div className={`p-3 rounded-lg ${stat.color} mr-4`}>
-                          {stat.icon}
+                        <div className={`p-3 rounded-lg ${stat.color} mr-4 flex items-center justify-center`}>
+                          <span className="flex items-center justify-center w-6 h-6">{stat.icon}</span>
                         </div>
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-700">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-semibold text-gray-700 truncate">
                             {stat.title}
                           </h3>
-                          <p className="text-2xl font-bold text-gray-900">
+                          <p className="text-2xl font-bold text-gray-900 truncate">
                             {stat.value}
                           </p>
                         </div>
@@ -202,110 +202,133 @@ const AdminDashboard = () => {
                   <h2 className="text-xl font-semibold text-gray-800">Recent Bookings</h2>
                 </div>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Customer
                         </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Turf
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Turf Type
                         </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Date & Time
                         </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Status
                         </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Actions
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Sport
                         </th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {mockRecentBookings.map((booking) => (
-                        <tr key={booking.id} className="hover:bg-gray-50">
+                        <tr key={booking.id} className="hover:bg-gray-50 transition-colors duration-150">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                              <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 mr-3">
-                                {booking.customer.charAt(0)}
+                              <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                                <span className="text-gray-600 font-medium">
+                                  {booking.customer[0]}
+                                </span>
                               </div>
-                              <div className="text-sm font-medium text-gray-900">{booking.customer}</div>
+                              <div className="ml-4 min-w-0">
+                                <div className="text-sm font-medium text-gray-900 truncate">
+                                  {booking.customer}
+                                </div>
+                              </div>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <div className="mr-2">
-                                {getSportIcon(booking.sport)}
-                              </div>
-                              <div className="text-sm text-gray-900">{booking.turf}</div>
-                            </div>
+                            <div className="text-sm text-gray-900">{booking.turf}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-gray-900">{booking.date}</div>
                             <div className="text-sm text-gray-500">{booking.time}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(booking.status)}`}>
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(booking.status)}`}>
                               {booking.status}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button className="text-green-600 hover:text-green-900 mr-3">View</button>
-                            <button className="text-blue-600 hover:text-blue-900">Edit</button>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <div className="flex items-center space-x-2">
+                              <span className="flex items-center justify-center w-5 h-5">{getSportIcon(booking.sport)}</span>
+                              <span className="truncate">{booking.sport}</span>
+                            </div>
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-                <div className="p-4 border-t border-gray-200">
-                  <Button className="text-green-600 hover:text-green-800">
-                    View all bookings
-                    <FiChevronRight className="ml-1" />
-                  </Button>
-                </div>
               </div>
             </section>
 
-            {/* Available Turfs */}
-            <section>
-              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-xl font-semibold text-gray-800">Available Turfs</h2>
-                </div>
-                <div className="p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {mockAvailableTurfs.map((turf) => (
-                      <motion.div
-                        key={turf.id}
-                        whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                        className="bg-gray-50 rounded-xl p-6 border border-gray-200"
+            {/* Notifications and Available Turfs Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Notifications */}
+              <section>
+                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                  <div className="p-6 border-b border-gray-200">
+                    <div className="flex justify-between items-center">
+                      <h2 className="text-xl font-semibold text-gray-800">Notifications</h2>
+                      <button className="text-sm text-green-600 hover:text-green-700">
+                        Mark all as read
+                      </button>
+                    </div>
+                  </div>
+                  <div className="divide-y divide-gray-200">
+                    {mockNotifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`p-6 ${
+                          !notification.read ? 'bg-green-50' : ''
+                        }`}
                       >
-                        <div className="flex items-center mb-4">
-                          <div className="p-3 rounded-lg bg-green-100 text-green-600 mr-4">
-                            {turf.icon}
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-800">{turf.name}</h3>
-                            <p className="text-sm text-gray-500">{turf.sport}</p>
+                        <div className="flex space-x-3">
+                          <div className="flex-1">
+                            <p className="text-sm text-gray-800">{notification.message}</p>
+                            <p className="mt-1 text-sm text-gray-500">{notification.time}</p>
                           </div>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <Button className="text-green-600 hover:text-green-800">
-                            View Details
-                            <FiChevronRight className="ml-1" />
-                          </Button>
-                          <Button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
-                            Book Now
-                          </Button>
-                        </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </div>
-              </div>
-            </section>
+              </section>
+
+              {/* Available Turfs */}
+              <section>
+                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                  <div className="p-6 border-b border-gray-200">
+                    <h2 className="text-xl font-semibold text-gray-800">Available Turfs</h2>
+                  </div>
+                  <div className="p-6">
+                    <div className="space-y-6">
+                      {mockAvailableTurfs.map((turf) => (
+                        <div key={turf.id} className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="flex-shrink-0">
+                              <div className="h-10 w-10 rounded-lg bg-green-100 flex items-center justify-center text-green-600">
+                                <span className="flex items-center justify-center">{turf.icon}</span>
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">{turf.name}</p>
+                              <p className="text-sm text-gray-500">{turf.sport}</p>
+                            </div>
+                          </div>
+                          <button className="text-green-600 hover:text-green-700">
+                            View Details
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
           </div>
         );
       case 'bookings':
@@ -314,7 +337,7 @@ const AdminDashboard = () => {
         return (
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-semibold mb-4">My Turfs</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">My Turfs</h2>
               <div className="h-[600px] flex items-center justify-center">
                 <p className="text-gray-500">Turfs management coming soon...</p>
               </div>
@@ -325,7 +348,7 @@ const AdminDashboard = () => {
         return (
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-semibold mb-4">Customers</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Customers</h2>
               <div className="h-[600px] flex items-center justify-center">
                 <p className="text-gray-500">Customer management coming soon...</p>
               </div>
@@ -336,7 +359,7 @@ const AdminDashboard = () => {
         return (
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-semibold mb-4">Reports</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Reports</h2>
               <div className="h-[600px] flex items-center justify-center">
                 <p className="text-gray-500">Reports coming soon...</p>
               </div>
@@ -349,7 +372,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+    <div className={`flex h-screen bg-gray-100 overflow-hidden ${isDarkMode ? 'dark' : ''}`}>
       {/* Sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -365,7 +388,7 @@ const AdminDashboard = () => {
             {/* Logo and Title */}
             <div className="p-5 border-b border-gray-200">
               <div className="flex items-center space-x-3">
-                <div className="bg-green-600 text-white p-2 rounded-lg">
+                <div className="bg-green-600 text-white p-2 rounded-lg flex items-center justify-center">
                   <FaFutbol size={24} />
                 </div>
                 <h1 className="text-2xl font-bold text-gray-800">SportNest</h1>
@@ -465,7 +488,7 @@ const AdminDashboard = () => {
             {!sidebarOpen && (
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="text-gray-500 hover:text-gray-700 mr-4"
+                className="text-gray-500 hover:text-gray-700 mr-4 flex items-center justify-center"
               >
                 <FiMenu size={24} />
               </button>
@@ -478,10 +501,13 @@ const AdminDashboard = () => {
             <div className="hidden md:block relative">
               <Input
                 type="text"
+                name="search"
                 placeholder="Search..."
-                className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
               />
-              <span className="absolute left-3 top-2.5 text-gray-400">
+              <span className="absolute left-3 top-2.5 text-gray-400 flex items-center justify-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
@@ -499,11 +525,14 @@ const AdminDashboard = () => {
               </span>
             </div>
 
+            {/* Dark mode toggle */}
+            <ThemeToggle />
+
             {/* Notifications */}
             <div className="relative">
               <button
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
-                className="text-gray-500 hover:text-gray-700 relative"
+                className="text-gray-500 hover:text-gray-700 relative flex items-center justify-center"
               >
                 <FiBell size={24} />
                 {unreadCount > 0 && (
@@ -512,8 +541,6 @@ const AdminDashboard = () => {
                   </span>
                 )}
               </button>
-
-              {/* Notifications dropdown */}
               <AnimatePresence>
                 {notificationsOpen && (
                   <motion.div
@@ -521,13 +548,13 @@ const AdminDashboard = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg overflow-hidden z-50"
+                    className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden z-50"
                   >
-                    <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-                      <h3 className="font-semibold text-gray-800">Notifications</h3>
+                    <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                      <h3 className="font-semibold text-gray-800 dark:text-white">Notifications</h3>
                       <button
                         onClick={markAllAsRead}
-                        className="text-sm text-green-600 hover:text-green-800"
+                        className="text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300"
                       >
                         Mark all as read
                       </button>
@@ -536,19 +563,19 @@ const AdminDashboard = () => {
                       {mockNotifications.map((notification) => (
                         <div
                           key={notification.id}
-                          className={`p-4 border-b border-gray-100 hover:bg-gray-50 ${
-                            !notification.read ? 'bg-blue-50' : ''
+                          className={`p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                            !notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''
                           }`}
                         >
-                          <p className="text-gray-800">{notification.message}</p>
-                          <p className="text-sm text-gray-500 mt-1">
+                          <p className="text-gray-800 dark:text-gray-200">{notification.message}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             {notification.time}
                           </p>
                         </div>
                       ))}
                     </div>
-                    <div className="p-3 bg-gray-50 text-center">
-                      <button className="text-sm text-green-600 hover:text-green-800">
+                    <div className="p-3 bg-gray-50 dark:bg-gray-700 text-center">
+                      <button className="text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300">
                         View all notifications
                       </button>
                     </div>
@@ -558,14 +585,14 @@ const AdminDashboard = () => {
             </div>
 
             {/* Settings */}
-            <button className="text-gray-500 hover:text-gray-700">
+            <button className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 flex items-center justify-center">
               <FiSettings size={24} />
             </button>
           </div>
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-4 bg-gray-50">
+        <main className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -631,6 +658,52 @@ const AdminDashboard = () => {
           .custom-calendar button {
             border-radius: 0.375rem;
             padding: 0.5rem;
+          }
+
+          /* Dark mode styles for calendar */
+          .dark .custom-calendar {
+            background-color: #1f2937;
+            color: #f3f4f6;
+          }
+
+          .dark .custom-calendar .react-calendar__navigation button {
+            color: #f3f4f6;
+          }
+
+          .dark .custom-calendar .react-calendar__month-view__weekdays__weekday {
+            color: #9ca3af;
+          }
+
+          .dark .custom-calendar .react-calendar__tile {
+            color: #f3f4f6;
+            background-color: #1f2937;
+          }
+
+          .dark .custom-calendar .react-calendar__tile:enabled:hover {
+            background-color: #374151;
+          }
+
+          .dark .custom-calendar .react-calendar__tile--now {
+            background-color: #374151;
+          }
+
+          .dark .custom-calendar .react-calendar__tile--active {
+            background-color: #16a34a;
+            color: white;
+          }
+
+          /* Additional dark mode styles */
+          .dark .react-calendar {
+            background-color: #1f2937;
+            border-color: #374151;
+          }
+
+          .dark .react-calendar__month-view__weekdays__weekday abbr {
+            text-decoration: none;
+          }
+
+          .dark .react-calendar__month-view__days__day--neighboringMonth {
+            color: #6b7280;
           }
         `}
       </style>

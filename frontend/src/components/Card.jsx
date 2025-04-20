@@ -42,11 +42,11 @@ const Card = ({
   return (
     <div
       className={`
-        bg-white 
-        ${shadows[shadow]} 
+        bg-white dark:bg-gray-800
+        ${shadows[shadow]} dark:shadow-gray-900
         ${roundings[rounded]} 
         overflow-hidden 
-        ${hover ? 'transition-all duration-200 hover:shadow-lg' : ''}
+        ${hover ? 'transition-all duration-200 hover:shadow-lg dark:hover:shadow-gray-900' : ''}
         ${onClick ? 'cursor-pointer' : ''}
         ${className}
       `}
@@ -64,24 +64,24 @@ const Card = ({
       
       <div className={paddings[padding]}>
         {title && (
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
             {title}
           </h3>
         )}
         
         {subtitle && (
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
             {subtitle}
           </p>
         )}
         
-        <div className="text-gray-800">
+        <div className="text-gray-800 dark:text-gray-200">
           {children}
         </div>
       </div>
       
       {footer && (
-        <div className={`border-t border-gray-200 ${paddings[padding]} bg-gray-50`}>
+        <div className={`border-t border-gray-200 dark:border-gray-700 ${paddings[padding]} bg-gray-50 dark:bg-gray-900`}>
           {footer}
         </div>
       )}
